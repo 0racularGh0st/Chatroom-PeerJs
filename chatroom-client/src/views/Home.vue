@@ -10,6 +10,7 @@
 </template>
 <script>
 import { createRoom } from '../utils';
+import config from "../config";
 export default {
   name: 'Home',
   data(){
@@ -24,8 +25,9 @@ export default {
       window.location.href = `/room/${data.roomId}`
     },
     joinRoom: function(){
-      if(this.roomId!=="")
+      if(this.roomId!=="" && config.ROOM_PATTERN.test(this.roomId))
       window.location.href = `/room/${this.roomId}`
+      else alert("Invalid Room");
     }
   }
 
