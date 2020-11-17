@@ -1,12 +1,13 @@
 <template>
   <div class="room">
-   Room Id = {{id}}
+   Room Id = {{roomId}}
    <div id="video-grid"></div>
   </div>
 </template>
 
 <script>
 import io from 'socket.io-client';
+import config from '../config';
 const Peer = window.Peer;
 const connectionOptions =  {
             "force new connection" : true,
@@ -25,10 +26,10 @@ export default {
 
   },
   mounted(){
-      socket = io.connect('http://localhost:3002',connectionOptions);
+      socket = io.connect(config.SIGNALLING_SERVER,connectionOptions);
 videoGrid = document.getElementById('video-grid')
 myPeer = new Peer(undefined, {
-  host:'nigeldavid-peer-serve.herokuapp.com', secure:true, port:443
+  host:config.PEER_SERVER, secure:true, port:443
 })
 myVideo = document.createElement('video')
 myVideo.muted = true;
@@ -53,7 +54,7 @@ socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
 })
 myPeer.on('open', id => {
-  socket.emit('join-room', 1000, id)
+  socket.emit('join-room', this.roomId, id)
 })
   },
   methods: {
@@ -79,7 +80,7 @@ myPeer.on('open', id => {
   },
   data(){
       return{
-          id : this.$route.params.id
+          roomId : this.$route.params.roomId
       }
   }
 }

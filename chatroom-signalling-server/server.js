@@ -1,11 +1,15 @@
 const express = require('express')
 const app = express()
+const cors = require('cors');
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const { v4: uuidV4 } = require('uuid')
+const PORT = process.env.PORT || 3002;
 
+app.disable('x-powered-by');
+app.use(cors());
 app.get('/', (req, res) => {
-  res.redirect(`http://localhost:8080/room/1000`)
+  res.status(200).send({roomId:`${uuidV4()}`});
 })
 
 // app.get('/:room', (req, res) => {
@@ -23,4 +27,4 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(3002)
+server.listen(PORT)
