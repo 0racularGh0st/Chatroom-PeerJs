@@ -1,7 +1,7 @@
 <template>
   <div class="room">
     <div v-show="isValidRoom">
-      Room Id = {{ roomId }}
+      <div>Room Id = {{ roomId }}</div>
       <div id="video-grid"></div>
     </div>
     <div v-show="!isValidRoom">Room Not Found</div>
@@ -30,51 +30,58 @@ export default {
     this.isValidRoom = await config.ROOM_PATTERN.test(this.roomId);
     let self = this;
     if (this.isValidRoom) {
-      window.onload = function(){
+      window.onload = function () {
         socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
-      videoGrid = document.getElementById("video-grid");
-      myPeer = new Peer(undefined, {
-        host: config.PEER_SERVER,
-        secure: true,
-        port: 443,
-      });
-      myVideo = document.createElement("video");
-      myVideo.muted = true;
-      myVideo.setAttribute("autoplay", '');
-      myVideo.setAttribute("muted", '');
-      myVideo.setAttribute("playsinline", '');
-      myVideo.setAttribute("webkit-playsinline", '');
-      navigator.mediaDevices
-        .getUserMedia({
-          video: { facingMode: "user", height: 300, width: 300 },
-          audio: true,
-        })
-        .then((stream) => {
-          self.addVideoStream(myVideo, stream);
-          myPeer.on("call", (call) => {
-            call.answer(stream);
-            const video = document.createElement("video");
-            video.setAttribute("autoplay", '');
-            video.setAttribute("playsinline", '');
-            video.setAttribute("webkit-playsinline", '');
-            call.on("stream", (userVideoStream) => {
-              self.addVideoStream(video, userVideoStream);
-            });
-          });
-          socket.on("user-connected", (userId) => {
-            self.connectToNewUser(userId, stream);
-          });
-        })
-        .catch(function (err) {
-          alert(err.name + ": " + err.message);
+        videoGrid = document.getElementById("video-grid");
+        myPeer = new Peer(undefined, {
+          host: config.PEER_SERVER,
+          secure: true,
+          port: 443,
         });
-      socket.on("user-disconnected", (userId) => {
-        if (peers[userId]) peers[userId].close();
-      });
-      myPeer.on("open", (id) => {
-        socket.emit("join-room", this.roomId, id);
-      });
-      }
+        myVideo = document.createElement("video");
+        myVideo.muted = true;
+        myVideo.setAttribute("autoplay", "");
+        myVideo.setAttribute("muted", "");
+        myVideo.setAttribute("playsinline", "");
+        myVideo.setAttribute("webkit-playsinline", "");
+        myVideo.setAttribute("style", "max-height: 45vw; max-width: 45vw; display: inline-block;");
+
+        navigator.mediaDevices
+          .getUserMedia({
+            video: {
+              height: {min: 150, ideal: 300},
+              width: {min: 150, ideal: 300},
+              facingMode: "user"
+            },
+            audio: true,
+          })
+          .then((stream) => {
+            self.addVideoStream(myVideo, stream);
+            myPeer.on("call", (call) => {
+              call.answer(stream);
+              const video = document.createElement("video");
+              video.setAttribute("autoplay", "");
+              video.setAttribute("playsinline", "");
+              video.setAttribute("webkit-playsinline", "");
+              video.setAttribute("style", "max-height: 45vw; max-width: 45vw; display: inline-block;");
+              call.on("stream", (userVideoStream) => {
+                self.addVideoStream(video, userVideoStream);
+              });
+            });
+            socket.on("user-connected", (userId) => {
+              self.connectToNewUser(userId, stream);
+            });
+          })
+          .catch(function (err) {
+            alert(err.name + ": " + err.message);
+          });
+        socket.on("user-disconnected", (userId) => {
+          if (peers[userId]) peers[userId].close();
+        });
+        myPeer.on("open", (id) => {
+          socket.emit("join-room", this.roomId, id);
+        });
+      };
     }
   },
   methods: {
@@ -93,9 +100,10 @@ export default {
     connectToNewUser: function (userId, stream) {
       const call = myPeer.call(userId, stream);
       const video = document.createElement("video");
-      video.setAttribute("autoplay", '');
-      video.setAttribute("playsinline", '');
-      video.setAttribute("webkit-playsinline", '');
+      video.setAttribute("autoplay", "");
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
+      video.setAttribute("style", "max-height: 45vw; max-width: 45vw; display: inline-block;");
       call.on("stream", (userVideoStream) => {
         this.addVideoStream(video, userVideoStream);
       });
@@ -116,14 +124,10 @@ export default {
 </script>
 <style scoped>
 #video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  grid-auto-rows: 300px;
+  display:  block;
 }
 
 video {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 </style>
