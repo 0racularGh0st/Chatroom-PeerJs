@@ -40,10 +40,10 @@ export default {
       });
       myVideo = document.createElement("video");
       myVideo.muted = true;
-      myVideo.setAttribute("autoplay", true);
-      myVideo.setAttribute("muted", true);
-      myVideo.setAttribute("playsinline", true);
-      myVideo.setAttribute("webkit-playsinline", "true");
+      myVideo.setAttribute("autoplay", '');
+      myVideo.setAttribute("muted", '');
+      myVideo.setAttribute("playsinline", '');
+      myVideo.setAttribute("webkit-playsinline", '');
       navigator.mediaDevices
         .getUserMedia({
           video: { facingMode: "user", height: 300, width: 300 },
@@ -54,9 +54,9 @@ export default {
           myPeer.on("call", (call) => {
             call.answer(stream);
             const video = document.createElement("video");
-            video.setAttribute("autoplay", true);
-            video.setAttribute("playsinline", true);
-            myVideo.setAttribute("webkit-playsinline", "true");
+            video.setAttribute("autoplay", '');
+            video.setAttribute("playsinline", '');
+            video.setAttribute("webkit-playsinline", '');
             call.on("stream", (userVideoStream) => {
               self.addVideoStream(video, userVideoStream);
             });
@@ -93,9 +93,9 @@ export default {
     connectToNewUser: function (userId, stream) {
       const call = myPeer.call(userId, stream);
       const video = document.createElement("video");
-      video.setAttribute("autoplay", true);
-      video.setAttribute("playsinline", true);
-      myVideo.setAttribute("webkit-playsinline", "true");
+      video.setAttribute("autoplay", '');
+      video.setAttribute("playsinline", '');
+      video.setAttribute("webkit-playsinline", '');
       call.on("stream", (userVideoStream) => {
         this.addVideoStream(video, userVideoStream);
       });
