@@ -4,9 +4,7 @@
       Room Id = {{ roomId }}
       <div id="video-grid"></div>
     </div>
-    <div v-show="!isValidRoom">
-        Room Not Found
-    </div>
+    <div v-show="!isValidRoom">Room Not Found</div>
   </div>
 </template>
 
@@ -30,46 +28,63 @@ export default {
   created() {},
   async mounted() {
     this.isValidRoom = await config.ROOM_PATTERN.test(this.roomId);
-    if(this.isValidRoom){
-      socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
-    videoGrid = document.getElementById("video-grid");
-    myPeer = new Peer(undefined, {
-      host: config.PEER_SERVER,
-      secure: true,
-      port: 443,
-    });
-    myVideo = document.createElement("video");
-    myVideo.muted = true;
-    navigator.mediaDevices
-      .getUserMedia({
-        video: true,
-        audio: true,
-      })
-      .then((stream) => {
-        this.addVideoStream(myVideo, stream);
-        myPeer.on("call", (call) => {
-          call.answer(stream);
-          const video = document.createElement("video");
-          call.on("stream", (userVideoStream) => {
-            this.addVideoStream(video, userVideoStream);
-          });
-        });
-
-        socket.on("user-connected", (userId) => {
-          this.connectToNewUser(userId, stream);
-        });
+    let self = this;
+    if (this.isValidRoom) {
+      window.onload = function(){
+        socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
+      videoGrid = document.getElementById("video-grid");
+      myPeer = new Peer(undefined, {
+        host: config.PEER_SERVER,
+        secure: true,
+        port: 443,
       });
-    socket.on("user-disconnected", (userId) => {
-      if (peers[userId]) peers[userId].close();
-    });
-    myPeer.on("open", (id) => {
-      socket.emit("join-room", this.roomId, id);
-    });
+      myVideo = document.createElement("video");
+      myVideo.muted = true;
+      myVideo.setAttribute("autoplay", true);
+      myVideo.setAttribute("muted", true);
+      myVideo.setAttribute("playsinline", true);
+      myVideo.setAttribute("webkit-playsinline", "true");
+      navigator.mediaDevices
+        .getUserMedia({
+          video: { facingMode: "user", height: 300, width: 300 },
+          audio: true,
+        })
+        .then((stream) => {
+          self.addVideoStream(myVideo, stream);
+          myPeer.on("call", (call) => {
+            call.answer(stream);
+            const video = document.createElement("video");
+            video.setAttribute("autoplay", true);
+            video.setAttribute("playsinline", true);
+            myVideo.setAttribute("webkit-playsinline", "true");
+            call.on("stream", (userVideoStream) => {
+              self.addVideoStream(video, userVideoStream);
+            });
+          });
+          socket.on("user-connected", (userId) => {
+            self.connectToNewUser(userId, stream);
+          });
+        })
+        .catch(function (err) {
+          alert(err.name + ": " + err.message);
+        });
+      socket.on("user-disconnected", (userId) => {
+        if (peers[userId]) peers[userId].close();
+      });
+      myPeer.on("open", (id) => {
+        socket.emit("join-room", this.roomId, id);
+      });
+      }
     }
   },
   methods: {
     addVideoStream: function (video, stream) {
-      video.srcObject = stream;
+      if ("srcObject" in video) {
+        video.srcObject = stream;
+      } else {
+        // Avoid using this in new browsers, as it is going away.
+        video.src = window.URL.createObjectURL(stream);
+      }
       video.addEventListener("loadedmetadata", () => {
         video.play();
       });
@@ -78,6 +93,9 @@ export default {
     connectToNewUser: function (userId, stream) {
       const call = myPeer.call(userId, stream);
       const video = document.createElement("video");
+      video.setAttribute("autoplay", true);
+      video.setAttribute("playsinline", true);
+      myVideo.setAttribute("webkit-playsinline", "true");
       call.on("stream", (userVideoStream) => {
         this.addVideoStream(video, userVideoStream);
       });
@@ -91,7 +109,7 @@ export default {
   data() {
     return {
       roomId: this.$route.params.roomId,
-      isValidRoom: false
+      isValidRoom: false,
     };
   },
 };

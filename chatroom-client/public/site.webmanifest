@@ -1,0 +1,22 @@
+{
+    "name": "Peer-Vue",
+    "short_name": "Peer Vue",
+    "start_url": "/",
+    "theme_color": "#121212",
+    "background_color": "#121212",
+    "display": "standalone",
+    "permissions": {
+        "audio-capture": {
+          "description": "Required to capture audio using getUserMedia()"
+        },
+        "video-capture": {
+          "description": "Required to capture video using getUserMedia()"
+        },
+        "audioCapture": {
+            "description": "Required to capture audio using getUserMedia()"
+          },
+          "videoCapture": {
+            "description": "Required to capture video using getUserMedia()"
+          }
+      }
+  }
