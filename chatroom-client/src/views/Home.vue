@@ -1,10 +1,16 @@
 <template>
   <div class="home">
    Hello
-   <button @click="createMyRoom()">Create Room</button>
+   <button @click="createMyRoom()">Create Video Room</button>
    Or
    <input type="text" v-model="roomId"/>
-   <button @click="joinRoom()">Join Room</button>
+   <button @click="joinRoom()">Join Video Room</button>
+
+
+   <button @click="createMyAudioRoom()">Create Audio Room</button>
+   Or
+   <input type="text" v-model="roomId"/>
+   <button @click="joinAudioRoom()">Join Audio Room</button>
   </div>
   
 </template>
@@ -27,6 +33,16 @@ export default {
     joinRoom: function(){
       if(this.roomId!=="" && config.ROOM_PATTERN.test(this.roomId))
       window.location.href = `/room/${this.roomId}`
+      else alert("Invalid Room");
+    },
+    createMyAudioRoom: async function(){
+      const {data} = await createRoom();
+      console.log("Room Id",data);
+      window.location.href = `/audio-room/${data.roomId}`
+    },
+    joinAudioRoom: function(){
+      if(this.roomId!=="" && config.ROOM_PATTERN.test(this.roomId))
+      window.location.href = `/audio-room/${this.roomId}`
       else alert("Invalid Room");
     }
   }

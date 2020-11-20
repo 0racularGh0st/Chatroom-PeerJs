@@ -2,7 +2,7 @@
   <div class="room">
     <div v-show="isValidRoom">
       <div>Room Id = {{ roomId }}</div>
-      <div id="video-grid"></div>
+      <div id="audio-grid"></div>
     </div>
     <div v-show="!isValidRoom">Room Not Found</div>
   </div>
@@ -22,9 +22,9 @@ const connectionOptions = {
   },
 };
 let socket;
-let videoGrid;
+let audioGrid;
 let myPeer;
-let myVideo;
+let myAudio;
 let peers = {};
 export default {
   name: "Room",
@@ -35,57 +35,49 @@ export default {
     if (this.isValidRoom) {
       window.onload = function () {
         socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
-        videoGrid = document.getElementById("video-grid");
+        audioGrid = document.getElementById("audio-grid");
         myPeer = new Peer(undefined, {
           host: config.PEER_SERVER,
           secure: true,
           port: 443,
           debug: 3,
         });
-        myVideo = document.createElement("video");
-        myVideo.muted = true;
-        myVideo.setAttribute("autoplay", "");
-        myVideo.setAttribute("muted", "");
-        myVideo.setAttribute("playsinline", "");
-        myVideo.setAttribute("webkit-playsinline", "");
-        myVideo.setAttribute(
+        myAudio = document.createElement("audio");
+        myAudio.muted = true;
+        myAudio.setAttribute("autoplay", "");
+        myAudio.setAttribute("muted", "");
+        myAudio.setAttribute("playsinline", "");
+        myAudio.setAttribute("webkit-playsinline", "");
+        myAudio.setAttribute(
           "style",
           "max-height: 45vw; max-width: 45vw; display: inline-block;"
         );
 
         navigator.mediaDevices
           .getUserMedia({
-            video: {
-              height: 480,
-              width: 640,
-              facingMode: "user",
-              frameRate: {
-                ideal: 30,
-                min: 10,
-              },
-            },
+            video: false,
             audio: true,
           })
           .then((stream) => {
-            self.addVideoStream(myVideo, stream);
+            self.addVideoStream(myAudio, stream);
             myPeer.on("call", async (call) => {
               await call.answer(stream);
-              const video = document.createElement("video");
-              video.setAttribute("autoplay", "");
-              video.setAttribute("playsinline", "");
-              video.setAttribute("webkit-playsinline", "");
-              video.setAttribute(
+              const audio = document.createElement("audio");
+              audio.setAttribute("autoplay", "");
+              audio.setAttribute("playsinline", "");
+              audio.setAttribute("webkit-playsinline", "");
+              audio.setAttribute(
                 "style",
                 "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 1px;"
               );
-              if ("srcObject" in video) {
-                video.srcObject = stream;
+              if ("srcObject" in audio) {
+                audio.srcObject = stream;
               } else {
                 // Avoid using this in new browsers, as it is going away.
-                video.src = window.URL.createObjectURL(stream);
+                audio.src = window.URL.createObjectURL(stream);
               }
-              call.on("stream", async (userVideoStream) => {
-                await self.addVideoStream(video, userVideoStream);
+              call.on("stream", async (userAudioStream) => {
+                await self.addVideoStream(audio, userAudioStream);
               });
             });
             socket.on("user-connected", async (userId) => {
@@ -105,43 +97,43 @@ export default {
     }
   },
   methods: {
-    addVideoStream: function (video, stream) {
+    addVideoStream: function (audio, stream) {
       console.log("called add stream")
-      if ("srcObject" in video) {
-        video.srcObject = stream;
+      if ("srcObject" in audio) {
+        audio.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
-        video.src = window.URL.createObjectURL(stream);
+        audio.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ",video.readyState);
-      video.onloadedmetadata = async()=> {
-        await video.play();
+      console.log("Ready state ",audio.readyState);
+      audio.onloadedmetadata = async()=> {
+        await audio.play();
       }
-      videoGrid.append(video);
+      audioGrid.append(audio);
     },
     connectToNewUser: function (userId, stream) {
       console.log("called");
       const call = myPeer.call(userId, stream);
-      const video = document.createElement("video");
-      video.setAttribute("autoplay", "");
-      video.setAttribute("playsinline", "");
-      video.setAttribute("webkit-playsinline", "");
-      video.setAttribute(
+      const audio = document.createElement("audio");
+      audio.setAttribute("autoplay", "");
+      audio.setAttribute("playsinline", "");
+      audio.setAttribute("webkit-playsinline", "");
+      audio.setAttribute(
         "style",
         "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
       );
-      if ("srcObject" in video) {
-        video.srcObject = stream;
+      if ("srcObject" in audio) {
+        audio.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
-        video.src = window.URL.createObjectURL(stream);
+        audio.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ",video.readyState);
-      call.on("stream", async (userVideoStream) => {
-        await this.addVideoStream(video, userVideoStream);
+      console.log("Ready state ",audio.readyState);
+      call.on("stream", async (userAudioStream) => {
+        await this.addVideoStream(audio, userAudioStream);
       });
       call.on("close", () => {
-        video.remove();
+        audio.remove();
       });
       peers[userId] = call;
     }
@@ -155,11 +147,11 @@ export default {
 };
 </script>
 <style scoped>
-#video-grid {
+#audio-grid {
   display: block;
 }
 
-video {
+audio {
   object-fit: cover;
 }
 </style>
