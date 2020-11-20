@@ -15,8 +15,11 @@ const Peer = window.Peer;
 const connectionOptions = {
   "force new connection": true,
   reconnectionAttempts: "Infinity", //avoid having user reconnect manually in order to prevent dead clients after a server restart
-  timeout: 10000, //before connect_error and connect_timeout are emitted.
+  timeout: 2000, //before connect_error and connect_timeout are emitted.
   transports: ["websocket"],
+  config: {
+    sdpSemantics: "unified-plan",
+  },
 };
 let socket;
 let videoGrid;
@@ -37,6 +40,7 @@ export default {
           host: config.PEER_SERVER,
           secure: true,
           port: 443,
+          debug: 3,
         });
         myVideo = document.createElement("video");
         myVideo.muted = true;
@@ -44,32 +48,48 @@ export default {
         myVideo.setAttribute("muted", "");
         myVideo.setAttribute("playsinline", "");
         myVideo.setAttribute("webkit-playsinline", "");
-        myVideo.setAttribute("style", "max-height: 45vw; max-width: 45vw; display: inline-block;");
+        myVideo.setAttribute(
+          "style",
+          "max-height: 45vw; max-width: 45vw; display: inline-block;"
+        );
 
         navigator.mediaDevices
           .getUserMedia({
             video: {
-              height: {min: 150, ideal: 300},
-              width: {min: 150, ideal: 300},
-              facingMode: "user"
+              height: { min: 150, ideal: 300 },
+              width: { min: 150, ideal: 300 },
+              facingMode: "user",
+              frameRate: {
+                ideal: 30,
+                min: 10,
+              },
             },
             audio: true,
           })
           .then((stream) => {
             self.addVideoStream(myVideo, stream);
-            myPeer.on("call", (call) => {
-              call.answer(stream);
+            myPeer.on("call", async (call) => {
+              await call.answer(stream);
               const video = document.createElement("video");
               video.setAttribute("autoplay", "");
               video.setAttribute("playsinline", "");
               video.setAttribute("webkit-playsinline", "");
-              video.setAttribute("style", "max-height: 45vw; max-width: 45vw; display: inline-block;");
-              call.on("stream", (userVideoStream) => {
-                self.addVideoStream(video, userVideoStream);
+              video.setAttribute(
+                "style",
+                "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 1px;"
+              );
+              if ("srcObject" in video) {
+                video.srcObject = stream;
+              } else {
+                // Avoid using this in new browsers, as it is going away.
+                video.src = window.URL.createObjectURL(stream);
+              }
+              call.on("stream", async (userVideoStream) => {
+                await self.addVideoStream(video, userVideoStream);
               });
             });
-            socket.on("user-connected", (userId) => {
-              self.connectToNewUser(userId, stream);
+            socket.on("user-connected", async (userId) => {
+              await self.connectToNewUser(userId, stream);
             });
           })
           .catch(function (err) {
@@ -86,33 +106,46 @@ export default {
   },
   methods: {
     addVideoStream: function (video, stream) {
+      console.log("called add stream")
       if ("srcObject" in video) {
         video.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
         video.src = window.URL.createObjectURL(stream);
       }
-      video.addEventListener("loadedmetadata", () => {
-        video.play();
-      });
+      console.log("Ready state ",video.readyState);
+      video.onloadedmetadata = async()=> {
+        await video.play();
+
+      }
       videoGrid.append(video);
     },
     connectToNewUser: function (userId, stream) {
+      console.log("called");
       const call = myPeer.call(userId, stream);
       const video = document.createElement("video");
       video.setAttribute("autoplay", "");
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
-      video.setAttribute("style", "max-height: 45vw; max-width: 45vw; display: inline-block;");
-      call.on("stream", (userVideoStream) => {
-        this.addVideoStream(video, userVideoStream);
+      video.setAttribute(
+        "style",
+        "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
+      );
+      if ("srcObject" in video) {
+        video.srcObject = stream;
+      } else {
+        // Avoid using this in new browsers, as it is going away.
+        video.src = window.URL.createObjectURL(stream);
+      }
+      console.log("Ready state ",video.readyState);
+      call.on("stream", async (userVideoStream) => {
+        await this.addVideoStream(video, userVideoStream);
       });
       call.on("close", () => {
         video.remove();
       });
-
       peers[userId] = call;
-    },
+    }
   },
   data() {
     return {
@@ -124,7 +157,7 @@ export default {
 </script>
 <style scoped>
 #video-grid {
-  display:  block;
+  display: block;
 }
 
 video {
