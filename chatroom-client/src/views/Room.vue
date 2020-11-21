@@ -2,6 +2,7 @@
   <div class="room">
     <div v-show="isValidRoom">
       <div>Room Id = {{ roomId }}</div>
+      <button @click="sendMessage()">Send</button>
       <div id="video-grid"></div>
     </div>
     <div v-show="!isValidRoom">Room Not Found</div>
@@ -26,6 +27,7 @@ let videoGrid;
 let myPeer;
 let myVideo;
 let peers = {};
+let conn;
 export default {
   name: "Room",
   created() {},
@@ -40,7 +42,7 @@ export default {
           host: config.PEER_SERVER,
           secure: true,
           port: 443,
-          debug: 3,
+          debug: 0,
         });
         myVideo = document.createElement("video");
         myVideo.muted = true;
@@ -89,13 +91,27 @@ export default {
               });
             });
             socket.on("user-connected", async (userId) => {
+              console.log("user connected->", userId);
               await self.connectToNewUser(userId, stream);
             });
+            
+             myPeer.on('connection', function(rConn) { 
+              console.log(rConn);
+              if(!peers[rConn.peer])
+              conn = myPeer.connect(rConn.peer,{ metadata:{name: "Not Nigel"},serialization: "json" });
+                // Receive messages
+              //conn = rConn;
+              rConn.on("data", function (data) {
+                console.log("Received", data);
+              });
+             });
+
           })
           .catch(function (err) {
             alert(err.name + ": " + err.message);
           });
         socket.on("user-disconnected", (userId) => {
+          console.log("user disconnected->", userId);
           if (peers[userId]) peers[userId].close();
         });
         myPeer.on("open", (id) => {
@@ -106,17 +122,17 @@ export default {
   },
   methods: {
     addVideoStream: function (video, stream) {
-      console.log("called add stream")
+      console.log("called add stream");
       if ("srcObject" in video) {
         video.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
         video.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ",video.readyState);
-      video.onloadedmetadata = async()=> {
+      console.log("Ready state ", video.readyState);
+      video.onloadedmetadata = async () => {
         await video.play();
-      }
+      };
       videoGrid.append(video);
     },
     connectToNewUser: function (userId, stream) {
@@ -136,7 +152,7 @@ export default {
         // Avoid using this in new browsers, as it is going away.
         video.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ",video.readyState);
+      console.log("Ready state ", video.readyState);
       call.on("stream", async (userVideoStream) => {
         await this.addVideoStream(video, userVideoStream);
       });
@@ -144,12 +160,18 @@ export default {
         video.remove();
       });
       peers[userId] = call;
+      console.log("user id",userId);
+      conn = myPeer.connect(userId, { metadata:{name: this.name},serialization: "json" });
+    },
+    sendMessage: function(){
+      conn.send("hello!!!");
     }
   },
   data() {
     return {
       roomId: this.$route.params.roomId,
       isValidRoom: false,
+      name: "Nigel",
     };
   },
 };
