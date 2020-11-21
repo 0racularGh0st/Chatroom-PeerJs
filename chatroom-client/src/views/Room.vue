@@ -27,7 +27,8 @@ let videoGrid;
 let myPeer;
 let myVideo;
 let peers = {};
-let conn;
+let conn = {};
+let peerToVideoId={};
 export default {
   name: "Room",
   created() {},
@@ -54,6 +55,7 @@ export default {
           "style",
           "max-height: 45vw; max-width: 45vw; display: inline-block;"
         );
+       
 
         navigator.mediaDevices
           .getUserMedia({
@@ -69,6 +71,7 @@ export default {
             audio: true,
           })
           .then((stream) => {
+             self.streamId= stream.id;
             self.addVideoStream(myVideo, stream);
             myPeer.on("call", async (call) => {
               await call.answer(stream);
@@ -80,6 +83,7 @@ export default {
                 "style",
                 "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 1px;"
               );
+              console.log("Me here->",myPeer);
               if ("srcObject" in video) {
                 video.srcObject = stream;
               } else {
@@ -87,6 +91,8 @@ export default {
                 video.src = window.URL.createObjectURL(stream);
               }
               call.on("stream", async (userVideoStream) => {
+                console.log("Me here on stream->",myPeer);
+                video.setAttribute("id",userVideoStream.id);
                 await self.addVideoStream(video, userVideoStream);
               });
             });
@@ -94,25 +100,35 @@ export default {
               console.log("user connected->", userId);
               await self.connectToNewUser(userId, stream);
             });
-            
-             myPeer.on('connection', function(rConn) { 
+
+            myPeer.on("connection", function (rConn) {
               console.log(rConn);
-              if(!peers[rConn.peer])
-              conn = myPeer.connect(rConn.peer,{ metadata:{name: "Not Nigel"},serialization: "json" });
-                // Receive messages
+              if (!peers[rConn.peer])
+                {
+                  conn[rConn.peer] = myPeer.connect(rConn.peer, {
+                  metadata: { name: "Not Nigel", videoId: self.streamId},
+                  serialization: "json",
+                });
+                  peerToVideoId[rConn.peer]=rConn.metadata.videoId;
+                }
+              // Receive messages
               //conn = rConn;
               rConn.on("data", function (data) {
                 console.log("Received", data);
               });
-             });
-
+            });
           })
           .catch(function (err) {
             alert(err.name + ": " + err.message);
           });
         socket.on("user-disconnected", (userId) => {
           console.log("user disconnected->", userId);
-          if (peers[userId]) peers[userId].close();
+          if (peers[userId]) {
+            peers[userId].close();
+          }
+           if(peerToVideoId[userId] && document.getElementById(peerToVideoId[userId])){
+              document.getElementById(peerToVideoId[userId]).remove();
+           }
         });
         myPeer.on("open", (id) => {
           socket.emit("join-room", this.roomId, id);
@@ -122,7 +138,7 @@ export default {
   },
   methods: {
     addVideoStream: function (video, stream) {
-      console.log("called add stream");
+      console.log("called add stream for ",stream);
       if ("srcObject" in video) {
         video.srcObject = stream;
       } else {
@@ -152,26 +168,32 @@ export default {
         // Avoid using this in new browsers, as it is going away.
         video.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ", video.readyState);
       call.on("stream", async (userVideoStream) => {
+         video.setAttribute("id",userVideoStream.id);
         await this.addVideoStream(video, userVideoStream);
       });
       call.on("close", () => {
         video.remove();
       });
       peers[userId] = call;
-      console.log("user id",userId);
-      conn = myPeer.connect(userId, { metadata:{name: this.name},serialization: "json" });
+      console.log("connecting to user: ", userId);
+      conn[userId] = myPeer.connect(userId, {
+        metadata: { name: this.name, videoId: this.streamId},
+        serialization: "json",
+      });
     },
-    sendMessage: function(){
-      conn.send("hello!!!");
-    }
+    sendMessage: function () {
+      for (const userId in conn) {
+        conn[userId].send("Hello!!");
+      }
+    },
   },
   data() {
     return {
       roomId: this.$route.params.roomId,
       isValidRoom: false,
       name: "Nigel",
+      streamId: null
     };
   },
 };
