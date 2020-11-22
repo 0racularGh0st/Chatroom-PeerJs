@@ -212,23 +212,34 @@ export default {
     createMyRoom: async function () {
       const { data } = await createRoom();
       console.log("Room Id", data);
+       this.setNickname();
       window.location.href = `/room/${data.roomId}`;
     },
     joinRoom: function () {
       if (this.roomId !== "" && config.ROOM_PATTERN.test(this.videoRoomId))
-        window.location.href = `/room/${this.videoRoomId}`;
+        {
+          this.setNickname();
+          window.location.href = `/room/${this.videoRoomId}`;
+        }
       else alert("Invalid Room");
     },
     createMyAudioRoom: async function () {
       const { data } = await createRoom();
+      this.setNickname();
       console.log("Room Id", data);
       window.location.href = `/audio-room/${data.roomId}`;
     },
     joinAudioRoom: function () {
       if (this.roomId !== "" && config.ROOM_PATTERN.test(this.audioRoomId))
-        window.location.href = `/audio-room/${this.audioRoomId}`;
+        {
+          this.setNickname();
+          window.location.href = `/audio-room/${this.audioRoomId}`;
+        }
       else alert("Invalid Room");
     },
+    setNickname: function(){
+      localStorage.setItem('peer-vue-chatroom-user',this.name);
+    }
   },
 };
 </script>
@@ -316,6 +327,7 @@ input {
   }
 }
 .create-room-modal {
+  top: 0;
   position: absolute;
   z-index: 4;
   height: 100vh;

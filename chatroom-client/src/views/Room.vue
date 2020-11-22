@@ -6,6 +6,26 @@
       <div id="video-grid"></div>
     </div>
     <div v-show="!isValidRoom">Room Not Found</div>
+    <div v-if="!nameExists">
+        <div class="create-room-modal" v-show="!nameExists">
+      <div class="create-room-card">
+        <div class="form-content">
+          <div class="form-label">
+            Nickname:
+            <input type="text" v-model="name" placeholder="Enter a Nickname" />
+          </div>
+          <div>
+            <div class="button-main" @click="setNickName()" v-if="name !== ''">
+            <div class="button-text">Join</div>
+             </div>
+              <div class="button-main disabled" v-if="name === ''">
+                <div class="button-text">Join</div>
+              </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,10 +53,27 @@ export default {
   name: "Room",
   created() {},
   async mounted() {
+    
+    if(localStorage.getItem('peer-vue-chatroom-user')!==null){
+      this.nameExists = true;
+    }
     this.isValidRoom = await config.ROOM_PATTERN.test(this.roomId);
     let self = this;
-    if (this.isValidRoom) {
-      window.onload = function () {
+    if (this.isValidRoom && this.nameExists) {
+      self.getStarted();
+    }
+  },
+  methods: {
+    setNickName: function(){
+        localStorage.setItem('peer-vue-chatroom-user',this.name);
+        this.nameExists = true;
+        if (this.isValidRoom && this.nameExists) {
+        this.getStarted();
+        }
+    },
+    getStarted: function(){
+      console.log("Username", localStorage.getItem('peer-vue-chatroom-user'));
+        let self = this;
         socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
         videoGrid = document.getElementById("video-grid");
         myPeer = new Peer(undefined, {
@@ -133,10 +170,7 @@ export default {
         myPeer.on("open", (id) => {
           socket.emit("join-room", this.roomId, id);
         });
-      };
-    }
-  },
-  methods: {
+    },
     addVideoStream: function (video, stream) {
       console.log("called add stream for ",stream);
       if ("srcObject" in video) {
@@ -192,18 +226,59 @@ export default {
     return {
       roomId: this.$route.params.roomId,
       isValidRoom: false,
-      name: "Nigel",
-      streamId: null
+      name: "",
+      streamId: null,
+      nameExists: false
     };
   },
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 #video-grid {
   display: block;
 }
 
 video {
   object-fit: cover;
+}
+.button-main {
+  padding: 0.75rem;
+  background: linear-gradient(45deg, #020024 0%, #56556f 50%, #829ac5 100%);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+  .button-text {
+    color: white;
+  }
+  &:hover {
+    background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
+  }
+  &.disabled {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+.create-room-modal {
+  position: absolute;
+  z-index: 4;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.65);
+}
+.create-room-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.form-content {
+  background: white;
+  padding: 2rem 1rem 2rem 1rem;
+  border-radius: 5px;
+}
+.form-label {
+  color: #56556f;
+  font-weight: 600;
+  margin-bottom: 2rem;
 }
 </style>
