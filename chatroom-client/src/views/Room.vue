@@ -55,6 +55,7 @@ export default {
   async mounted() {
     
     if(localStorage.getItem('peer-vue-chatroom-user')!==null){
+      this.name = localStorage.getItem('peer-vue-chatroom-user');
       this.nameExists = true;
     }
     this.isValidRoom = await config.ROOM_PATTERN.test(this.roomId);
@@ -143,7 +144,7 @@ export default {
               if (!peers[rConn.peer])
                 {
                   conn[rConn.peer] = myPeer.connect(rConn.peer, {
-                  metadata: { name: "Not Nigel", videoId: self.streamId},
+                  metadata: { name: self.name, videoId: self.streamId},
                   serialization: "json",
                 });
                   peerToVideoId[rConn.peer]=rConn.metadata.videoId;
