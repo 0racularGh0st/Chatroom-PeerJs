@@ -1,8 +1,14 @@
 <template>
   <div class="room">
     <div v-show="isValidRoom">
-      <div>Room Id = {{ roomId }}</div>
-      <button @click="sendMessage()">Send</button>
+      <div class="room-id">Room Id 
+          <div class="room-id-value">
+            {{ roomId }}
+          </div>
+          <div class="button-copy" @click="copyRoomId()">
+            <div class="button-text">Copy Room Id</div>
+          </div>
+      </div>
       <div id="video-grid"></div>
     </div>
     <div v-show="!isValidRoom">Room Not Found</div>
@@ -71,6 +77,15 @@ export default {
         if (this.isValidRoom && this.nameExists) {
         this.getStarted();
         }
+    },
+    copyRoomId: function(){
+      var theRoomId = document.createElement("textarea");
+      document.body.appendChild(theRoomId);
+      theRoomId.value = this.roomId;
+      theRoomId.select();
+      theRoomId.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      document.body.removeChild(theRoomId);
     },
     getStarted: async function(){
       console.log("Username", localStorage.getItem('peer-vue-chatroom-user'));
@@ -244,10 +259,19 @@ export default {
 <style lang="scss" scoped>
 #video-grid {
   display: block;
+  margin-top: 2rem;
 }
 
 video {
   object-fit: cover;
+}
+.room{
+  z-index: -1;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(180deg, #020024 0%, #56556f 50%, #829ac5 100%);
+  background-attachment: fixed;
 }
 .button-main {
   padding: 0.75rem;
@@ -288,5 +312,34 @@ video {
   color: #56556f;
   font-weight: 600;
   margin-bottom: 2rem;
+}
+.room-id{
+  color: white;
+  margin-top: 1rem;
+}
+.room-id-value{
+  color: #020024;
+  padding: 8px;
+  background: white;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0.5rem 1rem;
+}
+.button-copy{
+  padding: 0.75rem;
+    background: linear-gradient(45deg, #020024 0%, #56556f 50%, #829ac5 100%);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    width: max-content;
+    display: inline-block;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    .button-text {
+    color: white;
+  }
+  &:hover {
+    background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
+  }
 }
 </style>
