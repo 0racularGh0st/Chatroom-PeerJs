@@ -61,7 +61,7 @@ export default {
     this.isValidRoom = await config.ROOM_PATTERN.test(this.roomId);
     let self = this;
     if (this.isValidRoom && this.nameExists) {
-      self.getStarted();
+      await self.getStarted();
     }
   },
   methods: {
@@ -72,7 +72,7 @@ export default {
         this.getStarted();
         }
     },
-    getStarted: function(){
+    getStarted: async function(){
       console.log("Username", localStorage.getItem('peer-vue-chatroom-user'));
         let self = this;
         socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
@@ -148,6 +148,7 @@ export default {
                   serialization: "json",
                 });
                   peerToVideoId[rConn.peer]=rConn.metadata.videoId;
+                  self.notifyJoined(rConn.peer);
                 }
               // Receive messages
               //conn = rConn;
@@ -180,7 +181,6 @@ export default {
         // Avoid using this in new browsers, as it is going away.
         video.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ", video.readyState);
       video.onloadedmetadata = async () => {
         await video.play();
       };
@@ -222,6 +222,13 @@ export default {
         conn[userId].send("Hello!!");
       }
     },
+    notifyJoined: function(userId) {
+        let self= this;
+        console.log("notify called");
+        conn[userId].on('open',function(){
+          conn[userId].send({msgType:"notify",msg:`${self.name} joined!`});
+        });
+    }
   },
   data() {
     return {
