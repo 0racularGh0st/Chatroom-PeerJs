@@ -1,5 +1,8 @@
 <template>
-  <div class="room">
+  <div>
+    <div class="room">
+    </div> 
+    <ChatWindow/>
     <div v-show="isValidRoom">
       <div class="room-id">Room Id 
           <div class="room-id-value">
@@ -38,6 +41,7 @@
 <script>
 import io from "socket.io-client";
 import config from "../config";
+import ChatWindow from './ChatWindow';
 const Peer = window.Peer;
 const connectionOptions = {
   "force new connection": true,
@@ -106,7 +110,7 @@ export default {
         myVideo.setAttribute("webkit-playsinline", "");
         myVideo.setAttribute(
           "style",
-          "max-height: 45vw; max-width: 45vw; display: inline-block;"
+          "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
         );
        
 
@@ -134,7 +138,7 @@ export default {
               video.setAttribute("webkit-playsinline", "");
               video.setAttribute(
                 "style",
-                "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 1px;"
+                "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
               );
               console.log("Me here->",myPeer);
               if ("srcObject" in video) {
@@ -254,6 +258,9 @@ export default {
       nameExists: false
     };
   },
+  components: {
+    ChatWindow
+  }
 };
 </script>
 <style lang="scss" scoped>
@@ -315,7 +322,6 @@ video {
 }
 .room-id{
   color: white;
-  margin-top: 1rem;
 }
 .room-id-value{
   color: #020024;
