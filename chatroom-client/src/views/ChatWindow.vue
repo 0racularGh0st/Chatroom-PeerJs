@@ -4,9 +4,6 @@
             <div class="chat-bar">
                 <img :src="chat_icon" alt="chat icon" class="chat-icon">
             </div>
-            <div class="chat-content">
-
-            </div>
             <div>
                 <div class="new-message">
                     <div>
@@ -18,6 +15,43 @@
                 </div>
             </div>
         </div>
+        <div class="chat-content">
+                <div class="self-message">
+                    <div class="self-text">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
+                    </div>
+                </div>
+                <div class="peer-message">
+                    <div class="peer-text">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
+                    </div>
+                </div>
+                <div class="notification">
+                    <div class="text">
+                        David Joined!!!
+                    </div>
+                </div>
+                <div class="self-message">
+                    <div class="self-text">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
+                    </div>
+                </div>
+                <div class="peer-message">
+                    <div class="peer-text">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
+                    </div>
+                </div>
+                <div class="self-message">
+                    <div class="self-text">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
+                    </div>
+                </div>
+                <div class="peer-message">
+                    <div class="peer-text">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
+                    </div>
+                </div>
+            </div>
     </div>
 </template>
 <script>
@@ -36,20 +70,23 @@ export default {
     width: 320px;
     height: 100vh;
     right: 0;
-    background: #e0e0e0;
+        z-index: 4;
 }
 .chat-icon{
     height: 30px;
     width: 30px;
     padding-left: 16px;
+    z-index: 4;
 }
 .chat-bar{
     background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
     display: flex;
     height: 40px;
     align-items: center;
+    z-index: 4;
 }
 .button-send{
+    z-index: 4;
   padding: 0.75rem;
     background: linear-gradient(45deg, #020024 0%, #56556f 50%, #829ac5 100%);
     cursor: pointer;
@@ -68,9 +105,49 @@ export default {
   }
 }
  .new-message{
+     z-index: 4;
     bottom: 0;
     position: fixed;
     display: flex;
-    padding: 0.5rem;
+    padding: 10px;
+        background: #e0e0e0;
+
+  }
+  .chat-content{
+      z-index: -1;
+    width: 320px;
+    float: right;
+    background: #e0e0e0;
+    height: calc(100vh - 117px);
+    background-attachment: fixed;
+    margin-top: 40px;
+  }
+  .self-message{
+    max-width: 240px;
+    float: right;
+    background: #1f1c58ad;
+    padding: 5px;
+    margin: 10px;
+    display: inline-block;
+    border-radius: 10px;
+      .self-text{
+          color: white;
+      }
+  }
+  .peer-message{
+    max-width: 240px;
+    float: left;
+    margin: 10px;
+    display: inline-block;
+    border-radius: 10px;
+    padding: 5px;
+    background: #a7b5d0;
+      .peer-text{
+
+      }
+  }
+  .notification{
+    width: 320px;
+    display: inline-block;
   }
 </style>
