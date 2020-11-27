@@ -353,6 +353,5 @@ video {
     display: flex;
     overflow-y: auto;
     right: 0;
-    box-shadow: -11px 0px 20px -5px #777272;
 }
 </style>

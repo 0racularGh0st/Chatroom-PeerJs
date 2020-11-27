@@ -3,8 +3,11 @@
         <div class="chat-window">
             <div class="chat-bar-container">
                 <div class="chat-bar">
-                <img :src="chat_icon" alt="chat icon" class="chat-icon">
-            </div>
+                    <img :src="chat_icon" alt="chat icon" class="chat-icon" @click="showChat()">
+                    <div class="hide-chat" @click="hideChat()">
+                        >>
+                    </div>
+                </div>
             </div>
             <div class="chat-content">
                 <div class="self-message">
@@ -42,6 +45,7 @@
                         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
                     </div>
                 </div>
+                {{messages}}
             </div>
             <div class="new-message-container">
                 <div class="new-message">
@@ -59,9 +63,30 @@
 <script>
 import chat_icon from '../assets/chat.svg';
 export default {
+    mounted(){
+
+    },
     data(){
         return{
             chat_icon : chat_icon
+        }
+    },
+    methods: {
+        showChat: function(){
+            let chatbarEl=document.querySelector(".chat-bar-container");
+            let chatContentEl=document.querySelector(".chat-content");
+            let newMessageEl = document.querySelector(".new-message-container");
+            chatbarEl.classList.add("show");
+            chatContentEl.classList.add("show");
+            newMessageEl.classList.add("show");
+        },
+        hideChat: function(){
+            let chatbarEl=document.querySelector(".chat-bar-container");
+            let chatContentEl=document.querySelector(".chat-content");
+            let newMessageEl = document.querySelector(".new-message-container");
+            chatbarEl.classList.remove("show");
+            chatContentEl.classList.remove("show");
+            newMessageEl.classList.remove("show");
         }
     }
 }
@@ -77,11 +102,18 @@ export default {
     width: 30px;
     padding-left: 16px;
     z-index: 4;
+    cursor: pointer;
 }
 .chat-bar-container{
     position: fixed;
     display: block;
     width: 320px;
+    transform: translateX(260px);
+    transition: all 0.3s ease;
+     z-index: 99;
+    &.show{
+        transform: translateX(0px);
+    }
 }
 .chat-bar{
     background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
@@ -89,6 +121,7 @@ export default {
     height: 40px;
     align-items: center;
     z-index: 4;
+    justify-content: space-between;
 }
 .button-send{
     z-index: 4;
@@ -115,6 +148,11 @@ export default {
     z-index: 99;
     height: 77px;
     width: 343px;
+    transform: translateX(320px);
+        transition: all 0.3s ease;
+        &.show{
+        transform: translateX(0px);
+    }
 }
  .new-message{
     display: flex;
@@ -127,6 +165,12 @@ export default {
     background: #e0e0e0;
     padding-top: 40px;
     padding-bottom: 77px;
+    transform: translateX(320px);
+    min-height: calc(100vh - 117px);
+        transition: all 0.3s ease;
+        &.show{
+        transform: translateX(0px);
+    }
   }
   .self-message{
     max-width: 240px;
@@ -158,5 +202,14 @@ export default {
     border-top: 1px solid #b7b3b3;
     padding: 5px 0;
     border-bottom: 1px solid #b7b3b3;
+  }
+  textarea{
+      resize: none;
+  }
+  .hide-chat{
+      color: white;
+    font-size: 18px;
+    margin-right: 8px;
+    cursor: pointer;
   }
 </style>
