@@ -2,7 +2,7 @@
   <div>
     <div class="room">
     </div> 
-    <ChatWindow/>
+    <ChatWindow class="chat-window-main"/>
     <div v-show="isValidRoom">
       <div class="room-id">Room Id 
           <div class="room-id-value">
@@ -347,5 +347,12 @@ video {
   &:hover {
     background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
   }
+}
+.chat-window-main{
+  position: absolute;
+    display: flex;
+    overflow-y: auto;
+    right: 0;
+    box-shadow: -11px 0px 20px -5px #777272;
 }
 </style>

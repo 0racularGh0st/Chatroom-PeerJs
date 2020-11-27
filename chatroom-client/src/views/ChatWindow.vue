@@ -1,21 +1,12 @@
 <template>
     <div>
         <div class="chat-window">
-            <div class="chat-bar">
+            <div class="chat-bar-container">
+                <div class="chat-bar">
                 <img :src="chat_icon" alt="chat icon" class="chat-icon">
             </div>
-            <div>
-                <div class="new-message">
-                    <div>
-                        <textarea name="message" id="new-message" cols="27" rows="3"></textarea>
-                    </div>
-                    <div class="button-send">
-                        <div class="button-text">Send</div>
-                    </div>
-                </div>
             </div>
-        </div>
-        <div class="chat-content">
+            <div class="chat-content">
                 <div class="self-message">
                     <div class="self-text">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
@@ -52,6 +43,17 @@
                     </div>
                 </div>
             </div>
+            <div class="new-message-container">
+                <div class="new-message">
+                    <div>
+                        <textarea name="message" id="new-message" cols="27" rows="3"></textarea>
+                    </div>
+                    <div class="button-send">
+                        <div class="button-text">Send</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -66,17 +68,20 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chat-window{
-    position: absolute;
     width: 320px;
+    z-index: 4;
     height: 100vh;
-    right: 0;
-        z-index: 4;
 }
 .chat-icon{
     height: 30px;
     width: 30px;
     padding-left: 16px;
     z-index: 4;
+}
+.chat-bar-container{
+    position: fixed;
+    display: block;
+    width: 320px;
 }
 .chat-bar{
     background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
@@ -104,23 +109,24 @@ export default {
     background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
   }
 }
- .new-message{
-     z-index: 4;
+.new-message-container{
     bottom: 0;
     position: fixed;
+    z-index: 99;
+    height: 77px;
+    width: 343px;
+}
+ .new-message{
     display: flex;
     padding: 10px;
-        background: #e0e0e0;
-
+    background: #e0e0e0;
   }
   .chat-content{
-      z-index: -1;
-    width: 320px;
-    float: right;
+   z-index: 1;
+    display: inline-block;
     background: #e0e0e0;
-    height: calc(100vh - 117px);
-    background-attachment: fixed;
-    margin-top: 40px;
+    padding-top: 40px;
+    padding-bottom: 77px;
   }
   .self-message{
     max-width: 240px;
@@ -147,7 +153,10 @@ export default {
       }
   }
   .notification{
-    width: 320px;
+    width: 280px;
     display: inline-block;
+    border-top: 1px solid #b7b3b3;
+    padding: 5px 0;
+    border-bottom: 1px solid #b7b3b3;
   }
 </style>
