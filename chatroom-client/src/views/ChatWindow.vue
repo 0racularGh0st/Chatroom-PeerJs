@@ -45,7 +45,6 @@
                         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
                     </div>
                 </div>
-                {{messages}}
             </div>
             <div class="new-message-container">
                 <div class="new-message">
@@ -53,7 +52,7 @@
                         <textarea name="message" id="new-message" cols="27" rows="3"></textarea>
                     </div>
                     <div class="button-send">
-                        <div class="button-text">Send</div>
+                        <div class="button-text" @click="sendMessage()">Send</div>
                     </div>
                 </div>
             </div>
@@ -87,11 +86,23 @@ export default {
             chatbarEl.classList.remove("show");
             chatContentEl.classList.remove("show");
             newMessageEl.classList.remove("show");
+        },
+        sendMessage: function(){
+            let chatContentEl=document.querySelector(".chat-content");
+            let newMessage = document.createElement('div');
+            newMessage.classList.add("self-message");
+            let innerDiv = document.createElement('div');
+            innerDiv.classList.add("self-text");
+            innerDiv.innerHTML = "hello";
+            newMessage.append(innerDiv);
+            chatContentEl.append(newMessage);
+            document.querySelector(".chat-content").scrollIntoView(false);
+            
         }
     }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .chat-window{
     width: 320px;
     z-index: 4;
@@ -173,27 +184,28 @@ export default {
     }
   }
   .self-message{
-    max-width: 240px;
+    width: 240px;
     float: right;
+      .self-text{
+          color: white;
     background: #1f1c58ad;
     padding: 5px;
     margin: 10px;
-    display: inline-block;
     border-radius: 10px;
-      .self-text{
-          color: white;
+    width: fit-content;
+    float: right;
       }
   }
   .peer-message{
-    max-width: 240px;
+    width: 240px;
     float: left;
-    margin: 10px;
-    display: inline-block;
-    border-radius: 10px;
-    padding: 5px;
-    background: #a7b5d0;
       .peer-text{
-
+    background:#a7b5d0;
+    padding: 5px;
+    margin: 10px;
+    border-radius: 10px;
+    width: fit-content;
+    float: left;
       }
   }
   .notification{
