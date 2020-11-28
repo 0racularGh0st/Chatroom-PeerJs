@@ -10,41 +10,7 @@
                 </div>
             </div>
             <div class="chat-content">
-                <div class="self-message">
-                    <div class="self-text">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
-                    </div>
-                </div>
-                <div class="peer-message">
-                    <div class="peer-text">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
-                    </div>
-                </div>
-                <div class="notification">
-                    <div class="text">
-                        David Joined!!!
-                    </div>
-                </div>
-                <div class="self-message">
-                    <div class="self-text">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
-                    </div>
-                </div>
-                <div class="peer-message">
-                    <div class="peer-text">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
-                    </div>
-                </div>
-                <div class="self-message">
-                    <div class="self-text">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, voluptate eveniet ipsam ratione quisquam totam?
-                    </div>
-                </div>
-                <div class="peer-message">
-                    <div class="peer-text">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veniam dicta odit fuga molestias qui excepturi!
-                    </div>
-                </div>
+                
             </div>
             <div class="new-message-container">
                 <div class="new-message">
@@ -207,6 +173,7 @@ export default {
   }
   .chat-content{
    z-index: 1;
+    width: 320px;
     display: inline-block;
     background: #e0e0e0;
     padding-top: 40px;

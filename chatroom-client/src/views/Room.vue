@@ -59,6 +59,7 @@ let myVideo;
 let peers = {};
 let conn = {};
 let peerToVideoId={};
+let userIdToName={};
 export default {
   name: "Room",
   created() {},
@@ -159,7 +160,8 @@ export default {
             });
 
             myPeer.on("connection", function (rConn) {
-              console.log(rConn);
+              console.log("user->",rConn);
+              userIdToName[rConn.peer]=rConn.metadata.name;
               if (!peers[rConn.peer])
                 {
                   conn[rConn.peer] = myPeer.connect(rConn.peer, {
@@ -167,6 +169,7 @@ export default {
                   serialization: "json",
                 });
                   peerToVideoId[rConn.peer]=rConn.metadata.videoId;
+                  userIdToName[rConn.peer]=rConn.metadata.name;
                   self.notifyJoined(rConn.peer);
                 }
               // Receive messages
@@ -182,6 +185,7 @@ export default {
           });
         socket.on("user-disconnected", (userId) => {
           console.log("user disconnected->", userId);
+          self.emitter.emit('received',{msgType:"notify",msg:`${userIdToName[userId]} left.`});
           if (peers[userId]) {
             peers[userId].close();
           }
