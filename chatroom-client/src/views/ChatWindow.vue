@@ -49,10 +49,10 @@
             <div class="new-message-container">
                 <div class="new-message">
                     <div>
-                        <textarea name="message" id="new-message" cols="27" rows="3"></textarea>
+                        <textarea name="message" id="new-message" cols="27" rows="3" v-model="msgContent"></textarea>
                     </div>
-                    <div class="button-send">
-                        <div class="button-text" @click="sendMessage()">Send</div>
+                    <div class="button-send" @click="sendMsg()">
+                        <div class="button-text">Send</div>
                     </div>
                 </div>
             </div>
@@ -62,12 +62,19 @@
 <script>
 import chat_icon from '../assets/chat.svg';
 export default {
+    props: ['sendMessage'],
     mounted(){
-
+        this.emitter.on('received', data => {
+            if(data.msgType==="normal")
+            this.updateReceivedMessages(data);
+            if(data.msgType==="notify")
+            this.updateNotification(data);
+        })
     },
     data(){
         return{
-            chat_icon : chat_icon
+            chat_icon : chat_icon,
+            msgContent: ""
         }
     },
     methods: {
@@ -87,18 +94,46 @@ export default {
             chatContentEl.classList.remove("show");
             newMessageEl.classList.remove("show");
         },
-        sendMessage: function(){
+        sendMsg: function(){
+            if(this.msgContent!==''){
+            this.sendMessage(this.msgContent);
             let chatContentEl=document.querySelector(".chat-content");
             let newMessage = document.createElement('div');
             newMessage.classList.add("self-message");
             let innerDiv = document.createElement('div');
             innerDiv.classList.add("self-text");
-            innerDiv.innerHTML = "hello";
+            innerDiv.innerHTML = this.msgContent;
             newMessage.append(innerDiv);
             chatContentEl.append(newMessage);
             document.querySelector(".chat-content").scrollIntoView(false);
-            
+            this.msgContent = "";
+            }
+        },
+        updateReceivedMessages: function(data){
+            let chatContentEl=document.querySelector(".chat-content");
+            let newMessage = document.createElement('div');
+            newMessage.classList.add("peer-message");
+            let innerDiv = document.createElement('div');
+            innerDiv.classList.add("peer-text");
+            innerDiv.innerHTML = data.msg;
+            newMessage.append(innerDiv);
+            chatContentEl.append(newMessage);
+            if(chatContentEl.classList.contains("show"))
+            document.querySelector(".chat-content").scrollIntoView(false);
+        },
+        updateNotification: function(data){
+            let chatContentEl=document.querySelector(".chat-content");
+            let newMessage = document.createElement('div');
+            newMessage.classList.add("notification");
+            let innerDiv = document.createElement('div');
+            innerDiv.classList.add("text");
+            innerDiv.innerHTML = data.msg;
+            newMessage.append(innerDiv);
+            chatContentEl.append(newMessage);
+            if(chatContentEl.classList.contains("show"))
+            document.querySelector(".chat-content").scrollIntoView(false);
         }
+
     }
 }
 </script>

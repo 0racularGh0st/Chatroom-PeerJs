@@ -2,7 +2,7 @@
   <div>
     <div class="room">
     </div> 
-    <ChatWindow class="chat-window-main"/>
+    <ChatWindow class="chat-window-main" :sendMessage="sendMessage"/>
     <div v-show="isValidRoom">
       <div class="room-id">Room Id 
           <div class="room-id-value">
@@ -172,7 +172,8 @@ export default {
               // Receive messages
               //conn = rConn;
               rConn.on("data", function (data) {
-                console.log("Received", data);
+                //console.log("Received", data);
+                self.emitter.emit('received',data);
               });
             });
           })
@@ -236,9 +237,10 @@ export default {
         serialization: "json",
       });
     },
-    sendMessage: function () {
+    sendMessage: function (msgContent) {
+      let self = this;
       for (const userId in conn) {
-        conn[userId].send("Hello!!");
+        conn[userId].send({msgType:"normal",sender:self.name, msg:msgContent});
       }
     },
     notifyJoined: function(userId) {
