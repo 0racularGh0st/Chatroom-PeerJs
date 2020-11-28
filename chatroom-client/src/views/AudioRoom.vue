@@ -41,6 +41,7 @@ export default {
           secure: true,
           port: 443,
           debug: 3,
+          config: config.ICE_SERVERS
         });
         myAudio = document.createElement("audio");
         myAudio.muted = true;
@@ -98,17 +99,17 @@ export default {
   },
   methods: {
     addVideoStream: function (audio, stream) {
-      console.log("called add stream")
+      console.log("called add stream");
       if ("srcObject" in audio) {
         audio.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
         audio.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ",audio.readyState);
-      audio.onloadedmetadata = async()=> {
+      console.log("Ready state ", audio.readyState);
+      audio.onloadedmetadata = async () => {
         await audio.play();
-      }
+      };
       audioGrid.append(audio);
     },
     connectToNewUser: function (userId, stream) {
@@ -128,7 +129,7 @@ export default {
         // Avoid using this in new browsers, as it is going away.
         audio.src = window.URL.createObjectURL(stream);
       }
-      console.log("Ready state ",audio.readyState);
+      console.log("Ready state ", audio.readyState);
       call.on("stream", async (userAudioStream) => {
         await this.addVideoStream(audio, userAudioStream);
       });
@@ -136,7 +137,7 @@ export default {
         audio.remove();
       });
       peers[userId] = call;
-    }
+    },
   },
   data() {
     return {
