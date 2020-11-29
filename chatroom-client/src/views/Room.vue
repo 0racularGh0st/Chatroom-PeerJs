@@ -114,7 +114,6 @@ export default {
       document.body.removeChild(theRoomId);
     },
     getStarted: async function () {
-      console.log("Username", localStorage.getItem("peer-vue-chatroom-user"));
       let self = this;
       socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
       videoGrid = document.getElementById("video-grid");
@@ -172,7 +171,6 @@ export default {
   -o-transform: rotateY(180deg);
   transform: rotateY(180deg);`
             );
-            console.log("Me here->", myPeer);
             if ("srcObject" in video) {
               video.srcObject = stream;
             } else {
@@ -180,7 +178,6 @@ export default {
               video.src = window.URL.createObjectURL(stream);
             }
             call.on("stream", async (userVideoStream) => {
-              console.log("Me here on stream->", myPeer);
               video.setAttribute("id", userVideoStream.id);
               await self.addVideoStream(video, userVideoStream);
             });
@@ -191,7 +188,6 @@ export default {
           });
 
           myPeer.on("connection", function (rConn) {
-            console.log("user->", rConn);
             userIdToName[rConn.peer] = rConn.metadata.name;
             if (!peers[rConn.peer]) {
               conn[rConn.peer] = myPeer.connect(rConn.peer, {
@@ -234,7 +230,6 @@ export default {
       });
     },
     addVideoStream: function (video, stream) {
-      console.log("called add stream for ", stream);
       if ("srcObject" in video) {
         video.srcObject = stream;
       } else {
@@ -247,7 +242,6 @@ export default {
       videoGrid.append(video);
     },
     connectToNewUser: function (userId, stream) {
-      console.log("called");
       const call = myPeer.call(userId, stream);
       const video = document.createElement("video");
       video.setAttribute("autoplay", "");

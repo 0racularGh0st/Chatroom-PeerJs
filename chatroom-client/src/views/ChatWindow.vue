@@ -61,6 +61,8 @@ export default {
     },
     sendMsg: function () {
       if (this.msgContent !== "" && this.msgContent.length>0) {
+        let time = new Date();
+        let timeSent = time.toString().slice(4,21);
         this.sendMessage(this.msgContent);
         let chatContentEl = document.querySelector(".chat-content");
         let newMessage = document.createElement("div");
@@ -68,20 +70,30 @@ export default {
         let innerDiv = document.createElement("div");
         innerDiv.classList.add("self-text");
         innerDiv.innerHTML = this.msgContent;
+        let sender = document.createElement("div");
+        sender.classList.add("sender-name");
+        sender.innerHTML = "You | "+timeSent;
         newMessage.append(innerDiv);
+        newMessage.append(sender);
         chatContentEl.append(newMessage);
         document.querySelector(".chat-content").scrollIntoView(false);
         this.msgContent = "";
       }
     },
     updateReceivedMessages: function (data) {
+      let time = new Date();
+      let timeReceived = time.toString().slice(4,21);
       let chatContentEl = document.querySelector(".chat-content");
       let newMessage = document.createElement("div");
       newMessage.classList.add("peer-message");
       let innerDiv = document.createElement("div");
       innerDiv.classList.add("peer-text");
       innerDiv.innerHTML = data.msg;
+      let sender = document.createElement("div");
+      sender.classList.add("sender-name");
+      sender.innerHTML = data.sender+" | "+timeReceived;
       newMessage.append(innerDiv);
+      newMessage.append(sender);
       chatContentEl.append(newMessage);
       if (chatContentEl.classList.contains("show"))
         document.querySelector(".chat-content").scrollIntoView(false);
@@ -176,26 +188,41 @@ export default {
 .self-message {
   width: 90vw;
   float: right;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
   .self-text {
     color: white;
     background: #1f1c58ad;
     padding: 5px;
-    margin: 10px;
+    margin: 0px 10px 10px 10px;
     border-radius: 10px;
     width: fit-content;
     float: right;
   }
+  .sender-name{
+    width: max-content;
+    margin-right: 16px;
+    font-size: 10px;
+  }
 }
 .peer-message {
   width: 90vw;
-  float: left;
+    float: left;
+    display: flex;
+    flex-direction: column-reverse;
   .peer-text {
     background: #a7b5d0;
     padding: 5px;
-    margin: 10px;
+    margin: 0px 10px 10px 10px;
     border-radius: 10px;
     width: fit-content;
     float: left;
+  }
+  .sender-name{
+      width: max-content;
+    margin-left: 16px;
+    font-size: 10px;
   }
 }
 .notification {

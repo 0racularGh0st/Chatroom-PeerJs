@@ -134,7 +134,6 @@ export default {
     },
     getStarted: async function () {
       this.addPeerToList(this.name,undefined);
-      console.log("Username", localStorage.getItem("peer-vue-chatroom-user"));
       let self = this;
       socket = io.connect(config.SIGNALLING_SERVER, connectionOptions);
       audioGrid = document.getElementById("audio-grid");
@@ -174,7 +173,6 @@ export default {
               "style",
               `max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;`
             );
-            console.log("Me here->", myPeer);
             if ("srcObject" in audio) {
               audio.srcObject = stream;
             } else {
@@ -182,7 +180,6 @@ export default {
               audio.src = window.URL.createObjectURL(stream);
             }
             call.on("stream", async (userAudioStream) => {
-              console.log("Me here on stream->", myPeer);
               audio.setAttribute("id", userAudioStream.id);
               await self.addAudioStream(audio, userAudioStream);
             });
@@ -193,7 +190,6 @@ export default {
           });
 
           myPeer.on("connection", function (rConn) {
-            console.log("user->", rConn);
             self.addPeerToList(rConn.metadata.name,rConn.peer);
             userIdToName[rConn.peer] = rConn.metadata.name;
             if (!peers[rConn.peer]) {
@@ -238,7 +234,6 @@ export default {
       });
     },
     addAudioStream: function (audio, stream) {
-      console.log("called add stream for ", stream);
       if ("srcObject" in audio) {
         audio.srcObject = stream;
       } else {
@@ -251,7 +246,6 @@ export default {
       audioGrid.append(audio);
     },
     connectToNewUser: function (userId, stream) {
-      console.log("called");
       const call = myPeer.call(userId, stream);
       const audio = document.createElement("audio");
       audio.setAttribute("autoplay", "");
@@ -293,7 +287,6 @@ export default {
     },
     notifyJoined: function (userId) {
       let self = this;
-      console.log("notify called");
       conn[userId].on("open", function () {
         conn[userId].send({ msgType: "notify", msg: `${self.name} joined!` });
       });
