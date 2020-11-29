@@ -121,8 +121,6 @@ export default {
   width: 100vw;
   transition: all 0.3s ease;
   z-index: 99;
-  &.show {
-  }
 }
 .chat-bar {
   background: linear-gradient(90deg, #020024 0%, #56556f 50%, #829ac5 100%);
@@ -158,8 +156,6 @@ export default {
   height: 77px;
   width: 100vw;
   transition: all 0.3s ease;
-  &.show {
-  }
 }
 .new-message {
   display: flex;
@@ -176,8 +172,6 @@ export default {
   padding-bottom: 77px;
   min-height: calc(var(--vh, 1vh) * 100 - 117px);
   transition: all 0.3s ease;
-  &.show {
-  }
 }
 .self-message {
   width: 90vw;
