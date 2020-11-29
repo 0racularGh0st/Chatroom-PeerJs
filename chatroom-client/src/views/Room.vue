@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="room"></div>
-    <ChatWindow class="chat-window-main" :sendMessage="sendMessage" />
+    <ChatWindow class="chat-window-main hide" :sendMessage="sendMessage" />
     <div v-show="isValidRoom">
       <div class="room-id">
-        Room Id
+        Room ID:
         <div class="room-id-value">
           {{ roomId }}
         </div>
@@ -42,6 +42,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="chat-start" @click="showChat()">
+      <img src="../assets/chat.svg" height="30" width="30" />
     </div>
   </div>
 </template>
@@ -97,6 +100,10 @@ export default {
         this.getStarted();
       }
     },
+    showChat: function () {
+      let chatWindow = document.querySelector(".chat-window-main");
+      chatWindow.classList.remove("hide");
+    },
     copyRoomId: function () {
       var theRoomId = document.createElement("textarea");
       document.body.appendChild(theRoomId);
@@ -116,7 +123,7 @@ export default {
         secure: true,
         port: 443,
         debug: 0,
-        config: config.ICE_SERVERS
+        config: config.ICE_SERVERS,
       });
       myVideo = document.createElement("video");
       myVideo.muted = true;
@@ -126,7 +133,12 @@ export default {
       myVideo.setAttribute("webkit-playsinline", "");
       myVideo.setAttribute(
         "style",
-        "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
+        `max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px; 
+        -ms-transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  transform: rotateY(180deg);`
       );
 
       navigator.mediaDevices
@@ -153,7 +165,12 @@ export default {
             video.setAttribute("webkit-playsinline", "");
             video.setAttribute(
               "style",
-              "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
+              `max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px; 
+        -ms-transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  transform: rotateY(180deg);`
             );
             console.log("Me here->", myPeer);
             if ("srcObject" in video) {
@@ -238,7 +255,13 @@ export default {
       video.setAttribute("webkit-playsinline", "");
       video.setAttribute(
         "style",
-        "max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px;"
+        `max-height: 45vw; max-width: 45vw; display: inline-block; margin: 2px; 
+        transform: rotateY(180deg);
+        -ms-transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  transform: rotateY(180deg);`
       );
       if ("srcObject" in video) {
         video.srcObject = stream;
@@ -305,6 +328,7 @@ video {
   z-index: -1;
   position: fixed;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
   background: linear-gradient(180deg, #020024 0%, #56556f 50%, #829ac5 100%);
   background-attachment: fixed;
@@ -329,6 +353,7 @@ video {
   position: absolute;
   z-index: 4;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
   background: rgba(0, 0, 0, 0.65);
 }
@@ -351,17 +376,19 @@ video {
 }
 .room-id {
   color: white;
+  font-size: 14px;
 }
 .room-id-value {
   color: #020024;
-  padding: 8px;
+  padding: 0.3rem;
   background: white;
   border-radius: 5px;
   display: inline-block;
   margin: 0.5rem 1rem;
+  font-size: 12px;
 }
 .button-copy {
-  padding: 0.75rem;
+  padding: 0.3rem;
   background: linear-gradient(45deg, #020024 0%, #56556f 50%, #829ac5 100%);
   cursor: pointer;
   border-radius: 5px;
@@ -381,6 +408,27 @@ video {
   position: absolute;
   display: flex;
   overflow-y: auto;
+  transition: all 0.3s ease;
   right: 0;
+  z-index: 999;
+  &.hide {
+    transform: translateX(100%);
+  }
+}
+input {
+  font-size: 16px;
+}
+.chat-start {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  border: 1px solid white;
+  padding: 8px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  &:hover {
+    box-shadow: 0px 5px 20px -6px black;
+  }
 }
 </style>

@@ -248,6 +248,7 @@ export default {
   z-index: 1;
   position: fixed;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
   background: linear-gradient(180deg, #020024 0%, #56556f 50%, #829ac5 100%);
   background-attachment: fixed;
@@ -288,6 +289,7 @@ p {
 input {
   margin-left: 8px;
   height: 24px;
+  font-size: 16px;
 }
 .horizontal-line {
   margin: 1rem 0 0 0;
@@ -302,6 +304,7 @@ input {
   bottom: 0;
   width: 100vw;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   display: block;
   position: absolute;
   z-index: 2;
@@ -331,6 +334,7 @@ input {
   position: absolute;
   z-index: 4;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
   background: rgba(0, 0, 0, 0.65);
 }
