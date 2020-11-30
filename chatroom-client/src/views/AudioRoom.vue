@@ -139,7 +139,7 @@ export default {
       audioGrid = document.getElementById("audio-grid");
       myPeer = new Peer(undefined, {
         host: config.PEER_SERVER,
-        secure: true,
+        secure: config.IS_SECURE,
         port: 443,
         debug: 0,
         config: config.ICE_SERVERS,

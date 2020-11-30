@@ -24,5 +24,6 @@ module.exports = {
           // },
         ],
         sdpSemantics: "unified-plan",
-      }
+      },
+    IS_SECURE: false
 }
