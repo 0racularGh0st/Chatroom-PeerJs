@@ -18,6 +18,26 @@ Credits to https://github.com/WebDevSimplified for the basic functionality. Link
 5. Live Chat with Audio/Video Call.
 6. Make the client installable on all devices as a PWA(Progressive Web App).
 
+# How To Run (Locally)(tested with Node 10+)
+
+1. Start the signalling server(port 3002):
+```
+cd chatroom-signalling-server
+npm install
+npm run devStart
+```
+
+2. Start the Peer server(port 3001):
+```
+npm install -g peer
+peerjs --port 3001
+```
+3. Start the client(port 8080): 
+```
+cd chatroom-client
+npm install 
+npm run serve
+```
 # Browsers support
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
