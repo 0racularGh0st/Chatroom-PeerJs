@@ -16,7 +16,7 @@ Credits to https://github.com/WebDevSimplified for the basic functionality. Link
 3. Room Id Validation. 
 4. Cross Origin Interactions (If you wish to deploy the services seperately).
 5. Live Chat with Audio/Video Call.
-6. Make the client installable on all devices as a PWA(Progressive Web App).
+6. Make the client installable on all devices(Windows, MacOS, iOS & Android) as a PWA(Progressive Web App).
 
 # How To Run (Locally)(tested with Node 10+)
 
@@ -32,6 +32,9 @@ npm run devStart
 npm install -g peer
 peerjs --port 3001
 ```
+If you want to go beyond just running locally, you can use https://github.com/0racularGh0st/peer-server to deploy your own Peer server. 
+
+
 3. Start the client(port 8080): 
 ```
 cd chatroom-client
