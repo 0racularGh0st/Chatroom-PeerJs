@@ -43,6 +43,41 @@ cd chatroom-client
 npm install 
 npm run serve
 ```
+
+# Note
+If you're runnning the services in different ports or you've deployed them somewhere, be sure to change ```chatroom-client/src/config/index.js```
+If you're running locally, set ```IS_SECURE: false``` else if you're deployed your services to some hosting platform use true. 
+```
+module.exports = {
+    SIGNALLING_SERVER : "http://localhost:3002", //or your own signalling server
+    PEER_SERVER: "localhost:3001", // or your own peer server
+    ROOM_PATTERN: /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i,
+    ICE_SERVERS: {
+        iceServers: [
+          {
+            urls: [
+              "stun:stun.l.google.com:19302",
+              "stun:stun1.l.google.com:19302",
+              "stun:stun2.l.google.com:19302",
+              "stun:stun3.l.google.com:19302"
+            ],
+          }
+          // You can get a turn server from https://xirsys.com/ for free with limited bandwidth though. 
+          // It's good enough for testing. Generate static turn credentials and fill them below
+          // ,
+          // {
+          //   username: "replace with your turn server's  username",
+          //   credential: "replace with your turn server's credential",
+          //   urls: [
+          //     "turn:<turn server uri>:<port>?transport=udp or tcp",
+          //   ],
+          // },
+        ],
+        sdpSemantics: "unified-plan",
+      },
+    IS_SECURE: false
+}
+```
 # Browsers support
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
